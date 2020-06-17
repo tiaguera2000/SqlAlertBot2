@@ -1,23 +1,24 @@
-﻿using System;
+﻿using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
+using SqlAlertBot2.Services;
+using System;
 using Telegram.Bot;
 
 namespace SqlAlertBot2
 {
     class Program
     {
-        private static readonly TelegramBotClient bot = new TelegramBotClient("1234289330:AAHE5ZCIfVXXhaS2dwzNiFcwnaWyH6FgJys");
+        public static readonly TelegramBotClient bot = new TelegramBotClient("1234289330:AAHE5ZCIfVXXhaS2dwzNiFcwnaWyH6FgJys");
 
-        static async System.Threading.Tasks.Task Main(string[] args)
+        public static async System.Threading.Tasks.Task Main(string[] args)
         {
-            /*bot.OnMessage += Bot_OnMessage;
-            bot.StartReceiving();
-            Console.ReadLine();
-            bot.StopReceiving();*/
 
-            await bot.SendTextMessageAsync("-444824024", "olá!");
+            string message = Verifier.Verify();
+            await Sender.Send(message, bot);
+
+
         }
-        /*private static async void Bot_OnMessage(object sender, Telegram.Bot.Args.MessageEventArgs e)
-        {
-        }*/
+
     }
 }
