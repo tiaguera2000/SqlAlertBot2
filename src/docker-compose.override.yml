@@ -1,0 +1,14 @@
+version: '3.4'
+
+services:
+  AlertsBot.ui.site:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - "10000:80"
+  AlertsBot.webapi:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - "10050:80"
+

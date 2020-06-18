@@ -1,0 +1,105 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: #{kubernetes.deploymentname}#
+  labels:
+    app: #{kubernetes.deploymentname}#
+    version: v-#{kubernetes.imageversion}#
+  namespace: #{kubernetes.namespace}#
+spec:
+  replicas: #{kubernetes.replicas}#
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  minReadySeconds: 5 
+  template:
+    metadata:
+      labels:
+        app: #{kubernetes.deploymentname}#
+    spec:
+      containers:
+      - name: #{kubernetes.deploymentname}#
+        image: #{DOCKER_REGISTRY}#/#{kubernetes.imagename}#:#{kubernetes.imageversion}#
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            cpu: "#{kubernetes.resources.requests.cpu}#"
+            memory: "#{kubernetes.resources.requests.memory}#"
+          limits:
+            cpu: "#{kubernetes.resources.limits.cpu}#"
+            memory: "#{kubernetes.resources.limits.memory}#"
+        env:
+        - name: "ASPNETCORE_ENVIRONMENT"
+          value: "#{ASPNETCORE_ENVIRONMENT}#"
+     
+
+        - name: "Telegram__Key"
+          value: "#{TelegramKey}#"
+        - name: "chatId__TFS"
+          value: "#{chatIdTFS}#"
+        - name: "Logging__LogLevel__Default"
+          value: "#{logging.loglevel.default}#"
+        - name: "Log4NetConfigFile"
+          value: "#{Log4NetConfigFile}#"
+        - name: "CrossDomainEventsSettings__VirtualHost"
+          value: "#{CrossDomainEventsSettings.virtualhost}#"
+        - name: "CrossDomainEventsSettings__Host"
+          value: "#{CrossDomainEventsSettings.Host}#"
+        - name: "CrossDomainEventsSettings__User"
+          value: "#{CrossDomainEventsSettings.User}#"
+        - name: "CrossDomainEventsSettings__Password"
+          value: "#{CrossDomainEventsSettings.Password}#"
+        - name: "CrossDomainEventsSettings__AutomaticRecoveryEnabled"
+          value: "#{CrossDomainEventsSettings.AutomaticRecoveryEnabled}#"
+        - name: "CrossDomainEventsSettings__NetworkRecoveryInterval"
+          value: "#{CrossDomainEventsSettings.NetworkRecoveryInterval}#"
+        - name: "CrossDomainEventsSettings__ContinuationTimeout"
+          value: "#{CrossDomainEventsSettings.ContinuationTimeout}#"
+        - name: "CrossDomainEventsSettings__TopologyRecoveryEnabled"
+          value: "#{CrossDomainEventsSettings.TopologyRecoveryEnabled}#"
+        - name: "CrossDomainEventsSettings__RequestedHeartbeat"
+          value: "#{CrossDomainEventsSettings.RequestedHeartbeat}#"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: #{kubernetes.deploymentname}#
+  namespace: #{kubernetes.namespace}#
+spec:
+  type: ClusterIP
+  selector:
+    app: #{kubernetes.deploymentname}#
+  ports:
+  - name: http
+    protocol: TCP
+    port: 80
+    targetPort: 80
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: #{kubernetes.defaultname}#-ingress
+  namespace: #{kubernetes.namespace}#
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    kubernetes.io/tls-acme: "true"
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/ssl-ciphers: "ALL:!aNULL:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv2:+EXP"
+spec:
+  tls:
+  - hosts:
+    - #{kubernetes.domain}#
+    secretName: #{kubernetes.domain}#-secret
+  rules:
+  - host: #{kubernetes.domain}#
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: #{kubernetes.deploymentname}#
+          servicePort: 80
+---

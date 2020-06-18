@@ -1,0 +1,26 @@
+version: '3.4'
+
+services:
+  AlertsBot.ui.site:
+    image: caquitemplateuisite
+    build:
+      context: .
+      dockerfile: AlertsBot.UI.Site/Dockerfile
+  AlertsBot.webapi:
+    image: caquitemplatewebapi
+    build:
+      context: .
+      dockerfile: AlertsBot.WebApi/Dockerfile
+  AlertsBot.rabbitmq:
+    image: "rabbitmq:3-management"
+    hostname: "rabbitmq"
+    environment:
+      RABBITMQ_ERLANG_COOKIE: "SWQOKODSQALRPCLNMEQG"
+      RABBITMQ_DEFAULT_USER: "rabbitmq"
+      RABBITMQ_DEFAULT_PASS: "rabbitmq"
+      RABBITMQ_DEFAULT_VHOST: "/"
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    labels:
+      NAME: "rabbitmq-WebCrawler"

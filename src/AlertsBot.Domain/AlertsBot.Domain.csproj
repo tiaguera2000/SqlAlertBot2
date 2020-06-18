@@ -1,0 +1,34 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <AssemblyName>AlertsBot.Domain</AssemblyName>
+    <PackageId>AlertsBot.Domain</PackageId>
+    <AssetTargetFallback>$(AssetTargetFallback);portable-net45+win8+wp8+wpa81;</AssetTargetFallback>
+    <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
+    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
+    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AlertsBot.Domain.Core\AlertsBot.Domain.Core.csproj" />
+    <ProjectReference Include="..\AlertsBot.Infra.CrossCutting.Bus\AlertsBot.Infra.CrossCutting.Bus.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentValidation" Version="7.5.2" />
+    <PackageReference Include="log4net" Version="2.0.8" />
+    <PackageReference Include="Npgsql" Version="4.1.2" />
+    <PackageReference Include="SharedKernel.DomainEvents.Core" Version="2.0.1" />
+    <PackageReference Include="SharedKernel.DomainEvents.CrossDomainEvents" Version="2.2.3" />
+    <PackageReference Include="System.ComponentModel" Version="4.3.0" />
+    <PackageReference Include="System.ComponentModel.Annotations" Version="4.4.1" />
+    <PackageReference Include="System.Security.Claims" Version="4.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Events\" />
+    <Folder Include="TelegramCommands\" />
+  </ItemGroup>
+
+</Project>

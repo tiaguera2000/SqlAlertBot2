@@ -1,0 +1,77 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: #{kubernetes.deploymentname}#
+  labels:
+    app: #{kubernetes.deploymentname}#
+    version: v-#{kubernetes.imageversion}#
+  namespace: #{kubernetes.namespace}#
+spec:
+  replicas: #{kubernetes.replicas}#
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  minReadySeconds: 5 
+  template:
+    metadata:
+      labels:
+        app: #{kubernetes.deploymentname}#
+    spec:
+      volumes:
+        - name: tz-config
+          hostPath:
+            path: /usr/share/zoneinfo/Brazil/East
+            type: File
+      containers:
+      - name: #{kubernetes.deploymentname}#
+        image: #{DOCKER_REGISTRY}#/#{kubernetes.imagename}#:#{kubernetes.imageversion}#
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+        volumeMounts:
+          - name: tz-config
+            mountPath: /etc/localtime
+        env:
+        - name: "ASPNETCORE_ENVIRONMENT"
+          value: "#{ASPNETCORE_ENVIRONMENT}#"
+
+        - name: "ConnectionStrings__BNE"
+          value: "#{ConnectionStrings.DefaultConnection}#"
+        - name: "ConnectionStrings__PostgresSql"
+          value: "#{ConnectionStrings.PostgresSql}#"
+        - name: "ConnectionStrings__SinePRD"
+          value: "#{ConnectionStrings.SinePRD}#"
+
+        - name: "Telegram__Key"
+          value: "#{TelegramKey}#"
+        - name: "chatId__TriggerRelatorio"
+          value: "#{chatIdTriggerRelatorio}#"
+        - name: "chatId__GrupoAlertaBne"
+          value: "#{chatIdGrupoAlertaBne}#"
+        - name: "chatId__GrupoRabbits"
+          value: "#{chatIdGrupoAlertaRabbits}#"
+        - name: "Ativa__Trigger"
+          value: "#{AtivaTrigger}#"
+
+        - name: "Logging__LogLevel__Default"
+          value: "#{logging.loglevel.default}#"
+
+        - name: "CrossDomainEventsSettings__VirtualHost"
+          value: "#{CrossDomainEventsSettings.virtualhost}#"
+        - name: "CrossDomainEventsSettings__Host"
+          value: "#{CrossDomainEventsSettings.Host}#"
+        - name: "CrossDomainEventsSettings__User"
+          value: "#{CrossDomainEventsSettings.User}#"
+        - name: "CrossDomainEventsSettings__Password"
+          value: "#{CrossDomainEventsSettings.Password}#"
+        - name: "CrossDomainEventsSettings__AutomaticRecoveryEnabled"
+          value: "#{CrossDomainEventsSettings.AutomaticRecoveryEnabled}#"
+        - name: "CrossDomainEventsSettings__NetworkRecoveryInterval"
+          value: "#{CrossDomainEventsSettings.NetworkRecoveryInterval}#"
+        - name: "CrossDomainEventsSettings__ContinuationTimeout"
+          value: "#{CrossDomainEventsSettings.ContinuationTimeout}#"
+        - name: "CrossDomainEventsSettings__TopologyRecoveryEnabled"
+          value: "#{CrossDomainEventsSettings.TopologyRecoveryEnabled}#"
+        - name: "CrossDomainEventsSettings__RequestedHeartbeat"
+          value: "#{CrossDomainEventsSettings.RequestedHeartbeat}#"
