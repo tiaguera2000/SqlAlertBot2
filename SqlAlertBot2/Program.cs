@@ -17,7 +17,7 @@ namespace SqlAlertBot2
             string message = Verifier.Verify();
             await Sender.Send(message, bot);
 
-
+            //
         }
 
     }
